@@ -7,24 +7,29 @@
 
 using namespace boost::interprocess;
 
+class Memory {
+  public:
+    Memory()  {}
+    ~Memory() { shared_memory_object::remove("MySharedMemory"); }
+
+    void openMemObj() { shm = shared_memory_object(open_only, "MySharedMemory", read_write); }
+    void mapRegion() { region = mapped_region(shm, read_write); }
+    void* getRegionAddress() const { return region.get_address(); }
+
+  private:
+    shared_memory_object shm;
+    mapped_region region;
+
+};
+
 int main()
 {
-    // Remove shared memory on destruction
-    struct shm_remove
-    {
-        ~shm_remove()
-        {
-            shared_memory_object::remove("MySharedMemory");
-        }
-    } remover;
+    Memory mem;
 
-    // Open the shared memory object.
-    shared_memory_object shm(open_only, "MySharedMemory", read_write);
+    mem.openMemObj();
+    mem.mapRegion();
 
-    // Map the whole shared memory in this process
-    mapped_region region(shm, read_write);
-    // Get the address of the mapped region
-    void* addr = region.get_address();
+    void* addr = mem.getRegionAddress();
 
     // Construct the shared structure in memory
     auto image = static_cast<Image*>(addr);

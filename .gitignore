@@ -1,4 +1,7 @@
+CMakeCache.txt
+/test/CMakeFiles/
 .vscode
-build
+/build/
 .idea
 cmake-build-debug
+*.sw*

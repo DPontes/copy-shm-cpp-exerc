@@ -1,3 +1,35 @@
+# OWN NOTES
+
+The work currently done - in the short available time that I had - consists of taking the implementations that have to do with memory manipulation:
+
+```
+// Create a shared memory object.
+shared_memory_object shm(create_only, "MySharedMemory", read_write);
+// Set size
+shm.truncate(sizeof(Image));
+// Map the whole shared memory in this process
+mapped_region region(shm, read_write);
+// Get the address of the mapped region
+void* addr = region.get_address();
+```
+
+and place these in a class called `Memory`, so that the code in the `main` function becomes:
+
+- more readable,
+- more testable,
+- easily expendable
+
+At this point, only the implementation and usage of a `Memory` class for each file was achieved correctly (*by correctly I mean it compiles and I can run both executables without any coredump occurring*).
+
+The next steps would be (given the time):
+- Create a Memory library (`memory.hpp` and `memory.cpp`) to be used in the application (*partially implemented in commit `0d2822c` but not yet concluded*)
+- Alter the original `Memory` class to have two child classes, where one would be responsible to create the shared object and the other to use (open) said object.
+- Investigate the possibility of using `templates` so that the class could be used with other types of objects (and not just the `Image` type)
+
+Things I've considered but not yet figured out ow to do:
+- Unit testing using GTest (and GMock)
+- Better implementation of the `mutex` process to better account for different (and corner-case) scenarios
+
 # Take it to production
 
 Can you turn this barely working prototype to a production-ready set of libraries?

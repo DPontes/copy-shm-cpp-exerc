@@ -6,11 +6,17 @@
 #include <boost/interprocess/shared_memory_object.hpp>
 #include <boost/interprocess/sync/scoped_lock.hpp>
 
+using namespace boost::interprocess;
+
 class Memory {
   public:
-    virtual ~Memory() = default;
-    virtual void mapRegion() = 0;
-    virtual void* getRegionAddress() = 0;
+    ~Memory();
+    void mapRegion();
+    void* getRegionAddress();
+
+  protected:
+    shared_memory_object shm;
+    mapped_region region;
 };
 
 class createdMemory : public Memory {
@@ -20,12 +26,6 @@ class createdMemory : public Memory {
 
     void createMemObj();
     void setSize();
-    void mapRegion() override;
-    void* getRegionAddress() override;
-
-  private:
-    shared_memory_object shm;
-    mapped_region region;
 };
 
 class openedMemory : public Memory {
@@ -34,8 +34,6 @@ class openedMemory : public Memory {
     ~openedMemory() { shared_memory_object::remove("MySharedMemory"); }
 
     void openMemObj();
-    void mapRegion() override;
-    void* getRegionAddress() override;
 };
 
 #endif /* MEMORY_H_ */

@@ -1,35 +1,13 @@
-#include "shared_data.h"
-#include <boost/interprocess/mapped_region.hpp>
-#include <boost/interprocess/shared_memory_object.hpp>
-#include <boost/interprocess/sync/scoped_lock.hpp>
+#include "memory.h"
 #include <cstdio>
 #include <iostream>
 #include <thread>
 
 using namespace boost::interprocess;
 
-class Memory {
-  public:
-    Memory()    {
-                    shared_memory_object::remove("MySharedMemory");
-                }
-    ~Memory()   {
-                    shared_memory_object::remove("MySharedMemory");
-                }
-
-    void createMemObj() { shm = shared_memory_object(create_only, "MySharedMemory", read_write); }
-    void setSize() { shm.truncate(sizeof(Image)); }
-    void mapRegion() { region = mapped_region(shm, read_write); }
-    void* getRegionAddress() { return region.get_address(); }
-
-  private:
-    shared_memory_object shm;
-    mapped_region region;
-};
-
 int main()
 {
-    Memory mem;
+    createdMemory mem;
 
     mem.createMemObj();
     mem.setSize();
